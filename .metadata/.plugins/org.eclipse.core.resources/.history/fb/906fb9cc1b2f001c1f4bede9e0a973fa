@@ -1,0 +1,22 @@
+*.icon-silver {
+	color:silver;
+}
+
+*.icon-green {
+	color:#36b348;
+}
+
+*.icon-dark {
+	color:gray;
+}
+
+*.icon-blue {
+	color:#5aaedb;
+}
+
+.enabled {
+	text-align:center;
+	align: center;
+}
+
+

@@ -1,0 +1,11 @@
+*.icon-silver {
+	color:silver;
+}
+
+*.icon-green {
+	color:#36b348;
+}
+
+*.icon-dark {
+	color:gray;
+}
