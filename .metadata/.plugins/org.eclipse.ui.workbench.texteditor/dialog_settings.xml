@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
-		<item key="selection" value="photo"/>
+		<item key="selection" value="@{}"/>
 		<item key="casesensitive" value="false"/>
 		<item key="wholeword" value="false"/>
 		<item key="isRegEx" value="false"/>
 		<item key="wrap" value="true"/>
 		<item key="incremental" value="false"/>
 		<list key="findhistory">
+			<item value="@{}"/>
+			<item value="first"/>
+			<item value="trash"/>
+			<item value="next"/>
+			<item value="get"/>
 			<item value="photo"/>
 			<item value="photos"/>
 			<item value="*{"/>
-			<item value="fileImage"/>
-			<item value="form"/>
-			<item value="img"/>
-			<item value="thumbnail"/>
-			<item value="result"/>
 		</list>
 		<list key="replacehistory">
 		</list>

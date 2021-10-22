@@ -71,37 +71,31 @@
 		</div>
 		
 		<div>
+			<form th:action="@{/users/page/1}" class="form-inline m-3">
+				<input type="hidden" name="sortField" th:value="${sortField}"/>
+				<input type="hidden" name="sortDir" th:value="${sortDir}"/>
+				
+				Filter:&nbsp;
+				<input type="search" name="keyword" th:value="${keyword}"  class="form-control m-2" required/>
+				&nbsp;&nbsp;
+				<button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
+				&nbsp;&nbsp;
+				<input type="button" value="Clear" class="btn btn-secondary" onclick="clearFilter()"/>
+			</form>
+		</div>
+		
+		<div>
 			<table class="table table-bordered table-hover table-striped table-responsive-xl">
 				<thead class="thead-dark">
 					<tr>
-						<th>
-							<a th:if="${sortField != 'id'}" th:href="@{'/users/page/' + ${currentPage} + '?sortField=id&sortDir=' + ${sortDir}}" class="text-white">ID</a>
-							<a th:if="${sortField == 'id'}" th:href="@{'/users/page/' + ${currentPage} + '?sortField=id&sortDir=' + ${reverseSortDir}}" class="text-white">ID</a>
-							<span th:if="${sortField == 'id'}" th:class="${sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}"></span>
-						</th>
+						<th th:replace="fragments :: column_link('id','ID')"/>
 						
 						<th>Photos</th>
-						<th>Email</th>
-						<th>
-							<a th:if="${sortField != 'firstName'}" th:href="@{'/users/page/' + ${currentPage} + '?sortField=firstName&sortDir=' + ${sortDir}}" class="text-white">First Name</a>
-							<a th:if="${sortField == 'firstName'}" th:href="@{'/users/page/' + ${currentPage} + '?sortField=firstName&sortDir=' + ${reverseSortDir}}" class="text-white">First Name</a>
-							<span th:if="${sortField == 'firstName'}" th:class="${sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}"></span>
-						</th>	
-						<th>
-							<a th:if="${sortField != 'lastName'}" th:href="@{'/users/page/' + ${currentPage} + '?sortField=lastName&sortDir=' + ${sortDir}}" class="text-white">Last Name</a>
-							<a th:if="${sortField == 'lastName'}" th:href="@{'/users/page/' + ${currentPage} + '?sortField=lastName&sortDir=' + ${reverseSortDir}}" class="text-white">Last Name</a>
-							<span th:if="${sortField == 'lastName'}" th:class="${sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}"></span>
-						</th>
-						<th>
-							<a th:if="${sortField != 'roles'}" th:href="@{'/users/page/' + ${currentPage} + '?sortField=roles&sortDir=' + ${sortDir}}" class="text-white">Roles</a>
-							<a th:if="${sortField == 'roles'}" th:href="@{'/users/page/' + ${currentPage} + '?sortField=roles&sortDir=' + ${reverseSortDir}}" class="text-white">Roles</a>
-							<span th:if="${sortField == 'roles'}" th:class="${sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}"></span>
-						</th>
-						<th>
-							<a th:if="${sortField != 'enabled'}" th:href="@{'/users/page/' + ${currentPage} + '?sortField=enabled&sortDir=' + ${sortDir}}" class="text-white">Enabled</a>
-							<a th:if="${sortField == 'enabled'}" th:href="@{'/users/page/' + ${currentPage} + '?sortField=enabled&sortDir=' + ${reverseSortDir}}" class="text-white">Enabled</a>
-							<span th:if="${sortField == 'enabled'}" th:class="${sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}"></span>
-						</th>
+						<th th:replace="fragments :: column_link('email','Email')"/>
+						<th th:replace="fragments :: column_link('firstName','First Name')"/>	
+						<th th:replace="fragments :: column_link('lastName','Last Name')"/>
+						<th>Roles</th>
+						<th th:replace="fragments :: column_link('enabled','Enabled')"/>
 						<th></th>
 					</tr>
 				</thead>
@@ -110,7 +104,7 @@
 						<td>[[${user.id}]]</td>
 						<td class="photos align-middle">
 							<span th:if="${user.photos == null}" class="fas fa-portrait fa-3x icon-silver"></span>
-							<img th:if="${user.photos != null}" th:src="@{${user.photosImagePath}}"/>
+							<img class="userPhoto" th:if="${user.photos != null}" th:src="@{${user.photosImagePath}}"/>
 						</td>
 						<td>[[${user.email}]]</td>
 						<td>[[${user.firstName}]]</td>
@@ -145,25 +139,33 @@
 			<span>No users found</span>
 		</div>
 		
-		<div>
+		<div th:if="${lastPage > 0}">
 			<nav>
 			  <ul class="pagination justify-content-center">
-			 	<li th:class="${currentPage != 1 ? 'page-item' : 'page-item disabled'}"><a class="page-link" th:href="@{'/users/page/1?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">First</a></li>
-			    <li th:class="${currentPage > 1 ? 'page-item' : 'page-item disabled'}"><a class="page-link" th:href="@{'/users/page/' + ${currentPage - 1} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">Prev</a></li>
+			 	<li th:class="${currentPage != 1 ? 'page-item' : 'page-item disabled'}">
+			 		<a th:replace="fragments :: page_link(1,'First')"></a>
+		 		</li>
+			    <li th:class="${currentPage > 1 ? 'page-item' : 'page-item disabled'}">
+			    	<a th:replace="fragments :: page_link(${currentPage -1},'Prev')"></a>
+		    	</li>
 			    <li th:class="${currentPage != i ? 'page-item' : 'page-item active'}" th:if="${currentPage < lastPage -1 and lastPage >= 3 and currentPage != 1}" th:each="i : ${#numbers.sequence(currentPage-1, currentPage + 1)}">
-			    	<a class="page-link" th:href="@{'/users/page/' + ${i} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">[[${i}]] </a>
+			    	<a th:replace="fragments :: page_link(${i},${i})"></a>
 			    </li>
 			    <li th:class="${currentPage != i ? 'page-item' : 'page-item active'}" th:if="${currentPage == 1 and currentPage < lastPage -2 and lastPage >= 3}" th:each="i : ${#numbers.sequence(currentPage, currentPage + 2)}">
-			    	<a class="page-link" th:href="@{'/users/page/' + ${i} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">[[${i}]] </a>
+			    	<a th:replace="fragments :: page_link(${i},${i})"></a>
 			    </li>
 			    <li th:class="${currentPage != i ? 'page-item' : 'page-item active'}" th:if="${currentPage >= lastPage -1 and lastPage >= 3}" th:each="i : ${#numbers.sequence(lastPage -2, lastPage)}">
-			    	<a class="page-link" th:href="@{'/users/page/' + ${i}} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}">[[${i}]] </a>
+			    	<a th:replace="fragments :: page_link(${i},${i})"></a>
 			    </li>
-			    <li th:class="${currentPage != i ? 'page-item' : 'page-item active'}" th:if="${lastPage < 3}" th:each="i : ${#numbers.sequence(1, lastPage)}">
-			    	<a class="page-link" th:href="@{'/users/page/' + ${i}} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}">[[${i}]] </a>
+			    <li th:class="${currentPage != i ? 'page-item' : 'page-item active'}" th:if="${lastPage < 3 and lastPage != 0}" th:each="i : ${#numbers.sequence(1, lastPage)}">
+			    	<a th:replace="fragments :: page_link(${i},${i})"></a>
 			    </li>
-			    <li th:class="${currentPage < lastPage ? 'page-item' : 'page-item disabled'}"><a class="page-link" th:href="@{'/users/page/' + ${currentPage +1}} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}">Next</a></li>
-			    <li th:class="${currentPage != lastPage ? 'page-item' : 'page-item disabled'}"><a class="page-link" th:href="@{'/users/page/' + ${lastPage} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">Last</a></li>
+			    <li th:class="${currentPage < lastPage ? 'page-item' : 'page-item disabled'}">
+			    	<a th:replace="fragments :: page_link(${currentPage + 1},'Next')"></a>
+			    </li>
+			    <li th:class="${currentPage != lastPage ? 'page-item' : 'page-item disabled'}">
+			    	<a th:replace="fragments :: page_link(${lastPage},'Last')"></a>
+			    </li>
 			  </ul>
 			</nav>
 		</div>
@@ -206,5 +208,9 @@
 			$("#confirmModal").modal();
 		});
 	});
+	
+	function clearFilter() {
+		window.location = "[[@{/users}]]";
+	}
 </script>
 </html>
