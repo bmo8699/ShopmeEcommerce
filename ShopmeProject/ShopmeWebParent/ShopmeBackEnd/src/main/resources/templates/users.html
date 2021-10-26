@@ -63,7 +63,13 @@
 	<div class="container-fluid">
 		<div>
 			<h2>Manage Users</h2>
-			<a th:href="@{/users/new}">Create New User</a>
+			<a th:href="@{/users/new}" class="fas fa-user-plus fa-lg mr-2 text-secondary"></a>
+
+			<a th:href="@{/users/export/csv}" class="fas fa-file-csv fa-lg mr-2 text-info"></a>
+
+			<a th:href="@{/users/export/excel}" class="fas fa-file-excel fa-lg text-success mr-2"></a>
+
+			<a th:href="@{/users/export/pdf}" class="fas fa-file-pdf fa-lg mr-2 text-danger"></a>
 		</div>
 		
 		<div th:if="${message != null}") class="alert alert-success text-center">
@@ -80,33 +86,37 @@
 				&nbsp;&nbsp;
 				<button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
 				&nbsp;&nbsp;
-				<input type="button" value="Clear" class="btn btn-secondary" onclick="clearFilter()"/>
+				<button type="button"  class="btn btn-secondary" onclick="clearFilter()"><i class="fas fa-eraser"></i> </button>
 			</form>
 		</div>
 		
-		<div>
+		<div class="full-details">
 			<table class="table table-bordered table-hover table-striped table-responsive-xl">
 				<thead class="thead-dark">
 					<tr>
-						<th th:replace="fragments :: column_link('id','ID')"/>
+						<th class="hideable-column">
+							<th th:replace="fragments :: column_link('id','ID','tag')"/>
+						</th>
 						
 						<th>Photos</th>
-						<th th:replace="fragments :: column_link('email','Email')"/>
-						<th th:replace="fragments :: column_link('firstName','First Name')"/>	
-						<th th:replace="fragments :: column_link('lastName','Last Name')"/>
+						<th class="hideable-column">
+							<th th:replace="fragments :: column_link('email','Email','tag')"/>
+						</th>
+						<th th:replace="fragments :: column_link('firstName','First Name','none')"/>	
+						<th th:replace="fragments :: column_link('lastName','Last Name','none')"/>
 						<th>Roles</th>
-						<th th:replace="fragments :: column_link('enabled','Enabled')"/>
+						<th th:replace="fragments :: column_link('enabled','Enabled','none')"/>
 						<th></th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr th:each="user : ${listUsers}">
-						<td>[[${user.id}]]</td>
+						<td class="hideable-column">[[${user.id}]]</td>
 						<td class="photos align-middle">
 							<span th:if="${user.photos == null}" class="fas fa-portrait fa-3x icon-silver"></span>
 							<img class="userPhoto" th:if="${user.photos != null}" th:src="@{${user.photosImagePath}}"/>
 						</td>
-						<td>[[${user.email}]]</td>
+						<td class="hideable-column">[[${user.email}]]</td>
 						<td>[[${user.firstName}]]</td>
 						<td>[[${user.lastName}]]</td>
 						<td>[[${user.roles}]]</td>
@@ -131,6 +141,36 @@
 			</table>
 		</div>
 		
+		<div class= "less-details">
+			<div th:each="user : ${listUsers}" class="row mb-2">
+				<div class="col-4">
+					<div class="column">
+						<span th:if="${user.photos == null}" class="fas fa-portrait fa-3x icon-silver"></span>
+						<img class="userPhoto" th:if="${user.photos != null}" th:src="@{${user.photosImagePath}}"/>				
+					</div>
+				</div>
+				<div class="col-8">
+					<div>[[${user.fullName}]]</div>	
+					<div>[[${user.roles}]]</div>	
+					<div class="mt-2 float-right">
+						<a th:if="${user.enabled == true}" class="fas fa-check-circle icon-green" 
+									th:href="@{'/users/' + ${user.id} + '/enabled/false'}"
+									title="Disable user"></a>
+						<a th:if="${user.enabled == false}" class="fas fa-check-circle icon-dark"
+							th:href="@{'/users/' + ${user.id} + '/enabled/true'}"
+							title="Enable user"></a>
+						&nbsp; 
+						<a class="fas fa-edit icon-blue" th:href="@{'/users/edit/' + ${user.id}}" title="Edit user"></a>
+						&nbsp; 
+						<a class="fas fa-trash-alt icon-dark link-delete" 
+							th:href="@{'/users/delete/' + ${user.id}}" 
+							title="Delete user"
+							th:userId="${user.id}"></a>
+					</div>		
+				</div>
+			</div>
+		</div>
+		
 		<div class="text-center m-1" th:if="${totalItems > 0 and startCount < totalItems}">
 			<span>Showing users # [[${startCount}]] to [[${endCount}]] of [[${totalItems}]]</span>
 		</div>
@@ -141,7 +181,7 @@
 		
 		<div th:if="${lastPage > 0}">
 			<nav>
-			  <ul class="pagination justify-content-center">
+			  <ul class="pagination justify-content-center flex-wrap">
 			 	<li th:class="${currentPage != 1 ? 'page-item' : 'page-item disabled'}">
 			 		<a th:replace="fragments :: page_link(1,'First')"></a>
 		 		</li>
